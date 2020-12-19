@@ -31,7 +31,7 @@ class TestContacts:
         tr_index = driver.get_index_value(full_input["username"], table_user_info)
 
         """验证 - 通讯录 - 部门页 - 添加的用户信息是否保存，且在表格的同一行内"""
-        pytest.assume(tr_index != None)
+        assert tr_index != None
         pytest.assume(full_input["title"] in table_user_info[tr_index])
         pytest.assume(full_input["phone"] in table_user_info[tr_index])
         pytest.assume(full_input["mail"] in table_user_info[tr_index])
