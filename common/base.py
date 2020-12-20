@@ -1,13 +1,16 @@
+import yaml
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from common.file_path import cookie_file
+
 
 class Base:
 
-    def __init__(self, driver: webdriver.Chrome, time=10):
+    def __init__(self, driver, time=10):
         self.driver = driver
         self.time = time
 
@@ -27,7 +30,8 @@ class Base:
         else:
             try:
                 ele = WebDriverWait(self.driver, self.time).until(
-                    EC.presence_of_element_located(locator))
+                    EC.visibility_of_element_located(locator))
+                # presence_of_element_located
                 return ele
             except TimeoutException as e:
                 raise Exception("元素定位超时")
@@ -38,7 +42,8 @@ class Base:
         else:
             try:
                 eles = WebDriverWait(self.driver, self.time).until(
-                    EC.presence_of_all_elements_located(locator))
+                    EC.visibility_of_all_elements_located(locator))
+                # presence_of_all_elements_located
                 return eles
             except TimeoutException as e:
                 raise Exception("元素定位超时")
@@ -178,18 +183,18 @@ class Base:
         if not isinstance(locator, tuple):
             raise Exception("定位类型错误，locator必须是元祖")
         try:
-            text_list = []
             eles = self.finds(locator)
-            for ele in eles:
-                text_list.append(ele.text)
+            text_list = [item.text for item in eles]
+            # print(text_list)
             return text_list
         except:
             print("获取text失败，返回内容为空")
             return ""
 
     def get_index_value(self, var, current_list):
-        """获取列表的索引和值"""
+        """根据值，获取值在列表中的索引"""
         for index, value in enumerate(current_list):
             if var in value:
                 return index
         return None
+

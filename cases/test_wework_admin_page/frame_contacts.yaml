@@ -1,0 +1,28 @@
+user_normal_data:
+  - username: 111嘿嘿
+    english_name: heihei1
+    acctid: "11231231"
+    phone: "19988889999"
+    expect: "19988889999"
+normal_ids:
+  - "正常添加成员"
+
+
+user_fail_data:
+  - username: 嘿嘿2
+    english_name: heihei2
+    acctid: "888888"
+    phone: "19988889991"
+    expect: "该帐号已被“疯疯”占有"
+
+  - username: 嘿嘿3
+    english_name: heihei3
+    acctid: "131244214"
+    phone: "18899998888"
+    expect: "该手机号已被“疯疯”占有"
+
+
+
+fail_ids:
+  - "输入存在的账号"
+  - "输入存在的手机号"
