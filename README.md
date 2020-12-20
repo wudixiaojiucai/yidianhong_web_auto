@@ -1,2 +1,4 @@
 # yidianhong_web_auto
-cookie登录，添加成员，输入完整信息提交，完成校验
+框架修改 完善po 更改为返回页面路径模式    
+新增外部conftest文件
+内部conftest新增添加成员后自动删除功能
