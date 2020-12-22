@@ -4,5 +4,5 @@
 新增外部conftest文件  
 内部conftest新增添加成员后自动删除功能  
 0.2  
-新增添加部门用例
-修改conftest 提升稳定性
+新增添加部门用例  
+修改conftest,提升稳定性  
