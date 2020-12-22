@@ -233,6 +233,19 @@ class Base:
             print(f"{var}不存在，或者{current_list}为空")
             return ""
 
+    def is_not_visible(self, locator):
+        if not isinstance(locator, tuple):
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
+        else:
+            try:
+                ele = WebDriverWait(self.driver, self.time).until_not(
+                    EC.visibility_of_element_located(locator))
+                # presence_of_element_located
+                # visibility_of_element_located
+                return ele
+            except TimeoutException as e:
+                raise ElementNotFound("元素定位超时")
+
 
 if __name__ == '__main__':
     driver = webdriver.Chrome()
