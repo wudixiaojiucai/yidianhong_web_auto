@@ -5,7 +5,7 @@ from common.file_path import cookie_file
 from pages.frame_index_page.frame_index_page import IndexPage
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="session", name="main")
 def index_fixture(driver):
     page = IndexPage(driver)
     yield page
