@@ -1,9 +1,13 @@
+import time
+
+import yaml
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from common.do_exception import LocatorTypeError, ElementNotFound
+from common.file_path import cookie_file
 
 
 class Base:
@@ -228,3 +232,21 @@ class Base:
         except:
             print(f"{var}不存在，或者{current_list}为空")
             return ""
+
+
+if __name__ == '__main__':
+    driver = webdriver.Chrome()
+    url_login = "https://work.weixin.qq.com/wework_admin/loginpage_wx"
+    url_index = "https://work.weixin.qq.com/wework_admin/frame#index"
+    driver.get(url_index)
+    with open(cookie_file, encoding="utf-8") as f:
+        cookie_data = yaml.safe_load(f)
+        for cookie in cookie_data:
+            driver.add_cookie(cookie)
+    driver.get(url_index)
+    mail_list = ("css selector", ".frame_nav_item_title")
+    driver.find_element_by_css_selector(".frame_nav_item_title").click()
+    time.sleep(2)
+    _index_btn_loc = ("id", "menu_index")
+    driver.find_element("id", "menu_index").click()
+    time.sleep(3)

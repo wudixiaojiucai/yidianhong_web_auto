@@ -25,12 +25,10 @@ class AddDepartmentPage(Base):
         """选择所属部门"""
         self.click_list_text(self._all_department, belong_department_name)
         self.click(self._save_btn)
-        self.click(self._cancel_btn)
         return self.get_text(self._all_tips)
 
     def add_department_fail_depart(self, department_name):
         """输入部门名称"""
         self.send(self._input_department_name, department_name)
         self.click(self._save_btn)
-        self.click(self._cancel_btn)
         return self.get_text(self._all_tips)
