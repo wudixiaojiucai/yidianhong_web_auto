@@ -1,16 +1,14 @@
-import yaml
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, ElementNotVisibleException
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-from common.file_path import cookie_file
+from common.do_exception import LocatorTypeError, ElementNotFound
 
 
 class Base:
 
-    def __init__(self, driver, time=10):
+    def __init__(self, driver: webdriver, time=10):
         self.driver = driver
         self.time = time
 
@@ -26,19 +24,20 @@ class Base:
 
     def find(self, locator):
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         else:
             try:
                 ele = WebDriverWait(self.driver, self.time).until(
                     EC.visibility_of_element_located(locator))
                 # presence_of_element_located
+                # visibility_of_element_located
                 return ele
             except TimeoutException as e:
-                raise Exception("元素定位超时")
+                raise ElementNotFound("元素定位超时")
 
     def finds(self, locator):
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         else:
             try:
                 eles = WebDriverWait(self.driver, self.time).until(
@@ -46,7 +45,7 @@ class Base:
                 # presence_of_all_elements_located
                 return eles
             except TimeoutException as e:
-                raise Exception("元素定位超时")
+                raise ElementNotFound("元素定位超时")
 
     def send(self, locator, text=""):
         ele = self.find(locator)
@@ -63,23 +62,38 @@ class Base:
             raise ElementNotVisibleException("元素不可见、无法点击、或者不唯一")
 
     def click_index(self, locator, index):
-        """不唯一的元素，根据索引点击"""
+        """列表，根据索引点击"""
         eles = self.finds(locator)
         if eles[index].is_displayed():
             eles[index].click()
         else:
             raise ElementNotVisibleException("元素不可见、无法点击、或者索引输入错误")
 
+    def click_list_text(self, locator, text):
+        """列表，根据内容点击"""
+        res = self.finds(locator)
+        try:
+            for index, item in enumerate(res):
+                if item.text == text:
+                    self.click_index(locator, index)
+        except:
+            raise ElementNotFound("无法点击，或没获取到预期的文本内容")
+
     def select_by_value(self, locator, value):
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         else:
             element = self.find(locator)
             Select(element).select_by_value(value)
 
+    def select_by_text(self, locator, text):
+        """通过文本值定位"""
+        element = self.find(locator)
+        Select(element).select_by_visible_text(text)
+
     def get_attribute(self, locator, name):
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         else:
             try:
                 element = self.find(locator)
@@ -90,7 +104,7 @@ class Base:
 
     def radio_choose_value(self, locator, value):
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         else:
             try:
                 eles = self.finds(locator)
@@ -103,7 +117,7 @@ class Base:
 
     def radio_choose_text(self, locator, text):
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         else:
             try:
                 eles = self.finds(locator)
@@ -135,7 +149,7 @@ class Base:
     def get_text(self, locator):
         """获取文本"""
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         try:
             content = self.find(locator).text
             return content
@@ -146,7 +160,7 @@ class Base:
     def get_texts(self, locator, index):
         """获取文本"""
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         try:
             content = self.finds(locator)[index].text
             return content
@@ -157,7 +171,7 @@ class Base:
     def get_innertext(self, locator):
         """通过attribute获取文本"""
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         try:
             ele = self.find(locator)
             res = ele.get_attribute("innerText")
@@ -169,7 +183,7 @@ class Base:
     def get_innertexts(self, locator, index):
         """通过attribute获取文本"""
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         try:
             ele = self.finds(locator)[index]
             res = ele.get_attribute("innerText")
@@ -181,7 +195,7 @@ class Base:
     def get_list_texts(self, locator):
         """获取表格的文本"""
         if not isinstance(locator, tuple):
-            raise Exception("定位类型错误，locator必须是元祖")
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
         try:
             eles = self.finds(locator)
             text_list = [item.text for item in eles]
@@ -191,10 +205,26 @@ class Base:
             print("获取text失败，返回内容为空")
             return ""
 
+    def is_in_texts(self, locator, text):
+        """获取表格的文本"""
+        if not isinstance(locator, tuple):
+            raise LocatorTypeError("定位类型错误，locator必须是元祖")
+        try:
+            eles = self.finds(locator)
+            for item in eles:
+                if item.text == text:
+                    return True
+            return False
+        except:
+            print("获取text失败，返回内容为空")
+            return ""
+
     def get_index_value(self, var, current_list):
         """根据值，获取值在列表中的索引"""
-        for index, value in enumerate(current_list):
-            if var in value:
-                return index
-        return None
-
+        try:
+            for index, value in enumerate(current_list):
+                if var in value:
+                    return index
+        except:
+            print(f"{var}不存在，或者{current_list}为空")
+            return ""

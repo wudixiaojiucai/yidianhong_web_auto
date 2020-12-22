@@ -1,0 +1,6 @@
+normal_data:
+  - {index_department_name: "碑山老革命", expect: "新建部门成功"}
+  - {index_department_name: "二级部门", expect: "新建部门成功"}
+normal_ids:
+  - "新增二级部门"
+  - "新增三级部门"

@@ -2,6 +2,14 @@ import pytest
 import yaml
 from selenium import webdriver
 from common.file_path import cookie_file
+from pages.frame_index_page.frame_index_page import IndexPage
+
+
+@pytest.fixture(scope="session")
+def index_fixture(driver):
+    page = IndexPage(driver)
+    yield page
+    driver.quit()
 
 
 @pytest.fixture(scope="session", name="driver", autouse=True)
